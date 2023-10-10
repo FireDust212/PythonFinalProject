@@ -36,6 +36,7 @@ def draw(p1, elapsed_time):
     # Format elapsed time to min:sec
     mins = str(int(elapsed_time / 60))
     secs = str(int(elapsed_time % 60))
+    mils = str(int(elapsed_time*100))[-2:]
     # Add leading 0s
     if len(mins) == 1:
         mins = '0' + mins
@@ -43,7 +44,7 @@ def draw(p1, elapsed_time):
         secs = '0' + secs
 
     # Draw elapsed time
-    time_text = FONT.render(f"Time: {mins}:{secs}", 1, "white")
+    time_text = FONT.render(f"{mins}:{secs}:{mils}", 1, "white")
     WIN.blit(time_text, ((WIDTH - time_text.get_width()) / 2, 10))
 
     # Draw player
