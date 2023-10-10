@@ -43,16 +43,30 @@ def main():
     p1 = Player(WIDTH / 2, HEIGHT / 2, 100, 100)
 
     while run:
-        # Check all events that have happened since the last check
-        for event in pygame.event.get():
-            # User closed window with x
-            if event.type == pygame.QUIT:
-                # Stop running the game and stop checking events
-                run = False
-                break
-        
-        # Call the draw function
-        draw(p1)
+        mainMenu = True
+        while mainMenu:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainMenu = False
+                    run = False
+                    break
+            
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                mainMenu = False
+        gamePlay = True
+        while gamePlay:
+            # Check all events that have happened since the last check
+            for event in pygame.event.get():
+                # User closed window with x
+                if event.type == pygame.QUIT:
+                    # Stop running the game and stop checking events
+                    run = False
+                    gamePlay = False
+                    break
+                
+            # Call the draw function
+            draw(p1)
 
     # Close the window when the run loop has ended
     pygame.quit()
