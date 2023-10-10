@@ -2,6 +2,7 @@ import pygame
 
 # Constants
 PLAYER_HEIGHT, PLAYER_WIDTH = 50, 50
+PLAYER_VEL = 5
 
 # Declare the class - extends the pygame.Rect class, giving us some pre-declared functions
 class Player(pygame.Rect):
