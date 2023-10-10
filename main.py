@@ -7,6 +7,11 @@ import random
 from classes.player import Player, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_VEL
 
 
+# Setup font
+pygame.font.init()
+FONT = pygame.font.SysFont("consolas", 30)
+
+
 # Set up the window
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -21,11 +26,25 @@ BGTILE = pygame.transform.scale(pygame.image.load("./imgs/backgroundTile.png"), 
 # Function to draw everthing on screen
 # Thins at the top of the function are at the bottom layer of the drawing
 # This means the background should be drawn first
-def draw(p1):
+# Parameters: p1 (the player), elapsed_time (time elapsed)
+def draw(p1, elapsed_time):
     # Set up tiling of background.
     for x in range(0, WIDTH, 100):
         for y in range(0, HEIGHT, 100):
             WIN.blit(BGTILE, (x,y))
+    
+    # Format elapsed time to min:sec
+    mins = str(int(elapsed_time / 60))
+    secs = str(int(elapsed_time % 60))
+    # Add leading 0s
+    if len(mins) == 1:
+        mins = '0' + mins
+    if len(secs) == 1:
+        secs = '0' + secs
+
+    # Draw elapsed time
+    time_text = FONT.render(f"Time: {mins}:{secs}", 1, "white")
+    WIN.blit(time_text, ((WIDTH - time_text.get_width()) / 2, 10))
 
     # Draw player
     pygame.draw.rect(WIN, "red", p1)
@@ -72,9 +91,16 @@ def main():
 
         # Gameplay
         gamePlay = True
+
+        # Get game start time, setup time tracking
+        start_time = time.time()
+        elapsed_time = 0
+
         while gamePlay:
             # Set the maximum number of times the while loop runs (Frames per second)
             clock.tick(60)
+            # Increment elapsed time
+            elapsed_time = time.time() - start_time
 
             # Check all events that have happened since the last check
             for event in pygame.event.get():
@@ -105,7 +131,7 @@ def main():
             
                 
             # Call the draw function
-            draw(p1)
+            draw(p1, elapsed_time)
         # End Gameplay
 
     # Close the window when the run loop has ended
