@@ -15,4 +15,3 @@ class Player(pygame.Rect):
         # Set our current and max health
         self.currentHealth = currentHealth
         self.maxHealth = maxHealth
-    pass
