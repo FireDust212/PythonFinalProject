@@ -8,8 +8,12 @@ class Vector():
         self.x = x
         self.y = y
 
-    # Define what is printed when print(Vector instance) is called
+    # Define string representation for vectors
     def __str__(self):
+        return f"This Vector has x of: {self.x}, and y of: {self.y}"
+    
+    # Define representation for Vectors
+    def __repr__(self):
         return f"Vector: x:{self.x}, y:{self.y}"
     
     # Define a scaling function

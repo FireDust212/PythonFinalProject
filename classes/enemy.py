@@ -19,6 +19,14 @@ class Enemy(pygame.Rect):
         self.currentHealth = currentHealth
         self.maxHealth = maxHealth
 
+    # Define string representation for enemies
+    def __str__(self):
+        return f"This enemy has position (x,y) of: ({self.x}, {self.y}). It has {self.currentHealth} out of {self.maxHealth}"
+    
+    # Define representation for enemies
+    def __repr__(self):
+        return f"Enemy: x:{self.x}, y:{self.y}, currentHealth: {self.currentHealth}, maxHealth: {self.maxHealth}"
+
     # Define a movement function, moves the enemy towards a target using vector math
     # Also takes a list of the other enemies
     def moveTowards(self, target, enemies):
