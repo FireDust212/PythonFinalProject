@@ -15,3 +15,11 @@ class Player(pygame.Rect):
         # Set our current and max health
         self.currentHealth = currentHealth
         self.maxHealth = maxHealth
+    
+    # Define string representation for player
+    def __str__(self):
+        return f"This player has position (x,y) of: ({self.x}, {self.y}). It has {self.currentHealth} out of {self.maxHealth}"
+    
+    # Define representation for player
+    def __repr__(self):
+        return f"Player: x:{self.x}, y:{self.y}, currentHealth: {self.currentHealth}, maxHealth: {self.maxHealth}"
