@@ -1,5 +1,6 @@
 import pygame
 import math
+from classes.vector import Vector
 
 # Constants
 ENEMY_HEIGHT, ENEMY_WIDTH = 35, 35
@@ -22,29 +23,34 @@ class Enemy(pygame.Rect):
     # Also takes a list of the other enemies
     def moveTowards(self, target, enemies):
         # Define a vector from the position of the enemy to the position of the target
-        movementVector = {"x":self.x - target.x, "y":self.y - target.y}
+        direction = Vector(self.x - target.x, self.y - target.y)
         
-        # Take the magnitude of the movement vector (Used to find the unit vector in the same direction)
-        vectorMagnitude = math.sqrt((movementVector['x'] ** 2) + (movementVector['y'] ** 2))
-        if vectorMagnitude == 0:
-            vectorMagnitude = 1
-        
-        # Add the components of the unit vector in the direction of the movement vector to the enemy's position
-        # These components are scaled up by the enemy's velocity (ENEMY_VEL)
-        move = {'x': round((movementVector['x'] * ENEMY_VEL) / vectorMagnitude),"y": round((movementVector['y'] * ENEMY_VEL) / vectorMagnitude)}
-        
-        # Check to see if the enemies will collide
-        # Set up a false hitbox for the enemy's next position
-        nextPos = pygame.Rect(self.x, self.y, ENEMY_WIDTH, ENEMY_HEIGHT)
-        nextPos.x -= move["x"]
-        nextPos.y -= move['y']
+        # Get the unit vector in the direction the enemy will move
+        move = direction.getUnitVector()
 
-        hit = False
+        # Only procede if the move vector exists
+        if move != None:
+            # Scale up the move vector by the velocity
+            move.scaleBy(ENEMY_VEL)
 
-        for en in enemies:
-            if en.colliderect(nextPos):
-                hit = True
-        
-        if hit == False:
-            self.x -= move["x"]
-            self.y -= move['y']
+            # NOTE - The move vector will be rounded from here on, preventing some movement issues
+            
+            # Check to see if the enemies will collide
+            # Set up a false hitbox for the enemy's next position
+            nextPos = pygame.Rect(self.x, self.y, ENEMY_WIDTH, ENEMY_HEIGHT)
+            nextPos.x -= round(move.x)
+            nextPos.y -= round(move.y)
+
+            # Bool for collision
+            hit = False
+
+            # Check for collision
+            for en in enemies:
+                if en.colliderect(nextPos):
+                    hit = True
+                    break
+            
+            # Move this enemy if it will not collide with another
+            if hit == False:
+                self.x -= round(move.x)
+                self.y -= round(move.y)
