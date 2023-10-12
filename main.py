@@ -183,7 +183,10 @@ def main():
             # Move the enemies towards the player, handle collision
             # Loop though a copy of the enemy list (Modifying list while looping causes errors)
             for en in enemies[:]:
-                en.moveTowards(p1)
+                # Tell the enemy to move towads the player, give a list of all enemies (excluding this one)
+                otherEnemies = enemies[:]
+                otherEnemies.remove(en)
+                en.moveTowards(p1, otherEnemies)
                 # Remove enemies with health below 0
                 if en.currentHealth <= 0:
                     enemies.remove(en)
