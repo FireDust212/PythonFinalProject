@@ -1,16 +1,16 @@
-import pygame
+from classes.hitbox import Hitbox
 
 # Constants
 PLAYER_HEIGHT, PLAYER_WIDTH = 50, 50
 PLAYER_VEL = 5
 
 # Declare the class - extends the pygame.Rect class, giving us some pre-declared functions
-class Player(pygame.Rect):
+class Player(Hitbox):
 
     # Define the initialization function (called when a new object of the class is created)
-    def __init__(self, x, y, currentHealth, maxHealth):
+    def __init__(self, window, x, y, currentHealth, maxHealth):
         # Call the parent class's initialization function
-        pygame.Rect.__init__(self, x, y, PLAYER_WIDTH, PLAYER_HEIGHT)
+        Hitbox.__init__(self, window, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, "blue")
 
         # Set our current and max health
         self.currentHealth = currentHealth

@@ -45,11 +45,11 @@ def draw(p1, elapsed_time, enemies):
         secs = '0' + secs
 
     # Draw player
-    pygame.draw.rect(WIN, "blue", p1)
+    p1.draw()
 
     # Draw enemies
     for en in enemies:
-        pygame.draw.rect(WIN, "red", en)
+        en.draw()
 
     # Draw elapsed time
     time_text = FONT.render(f"{mins}:{secs}:{mils}", 1, "white")
@@ -65,7 +65,7 @@ def main():
     run = True
 
     # Create the player (p1) in the center of the screen
-    p1 = Player((WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100)
+    p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100)
 
     # Set up the enemies
     enemy_add_increment = 4000  # When an enemy is added
@@ -142,7 +142,7 @@ def main():
                         enemy_y = HEIGHT + ENEMY_HEIGHT
 
                     # Create the enemy
-                    en = Enemy(enemy_x, enemy_y, 10, 10)
+                    en = Enemy(WIN, enemy_x, enemy_y, 10, 10)
                     enemies.append(en)
 
                 # Reset enemy_count and subtract 10 from enemy_add_increment (minimum of 200)
@@ -186,7 +186,7 @@ def main():
                 # Tell the enemy to move towads the player, give a list of all enemies (excluding this one)
                 otherEnemies = enemies[:]
                 otherEnemies.remove(en)
-                en.moveTowards(p1, otherEnemies)
+                en.moveTowards(p1, ENEMY_VEL, otherEnemies)
                 # Remove enemies with health below 0
                 if en.currentHealth <= 0:
                     enemies.remove(en)
