@@ -63,5 +63,8 @@ class Hitbox(pygame.Rect):
     
     # Hit target function called when the hitbox reaches a target in the move funtion
     # this will be used by classes that extend hitbox.
-    def hitTarget():
+    def hitTarget(self):
         pass
+
+    def draw(self):
+        pygame.draw.rect(self.window, self.color, (self.x, self.y, self.width, self.height))
