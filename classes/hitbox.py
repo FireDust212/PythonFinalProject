@@ -7,11 +7,14 @@ class Hitbox(pygame.Rect):
     # Define the initialization function (called when a new object of the class is created)
     def __init__(self, window, x, y, width, height, color):
         # Call the parent class's initialization function
-        pygame.Rect.__init__(self, x, y, width, height)
+        super().__init__(x, y, width, height)
 
         # Set up other attributes
         self.color = color
         self.window = window
+        
+        # Bool to track if the hitbox should be deleted
+        self.deleteMe = False
     
     # Define string representation for hitbox
     def __str__(self):

@@ -3,10 +3,12 @@ import pygame
 import time
 import random
 
-# Import our player class
+# Import our classes
 from classes.player import Player, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_VEL
-# Import our enemy class
 from classes.enemy import Enemy, ENEMY_WIDTH, ENEMY_HEIGHT, ENEMY_VEL, ENEMY_DAMAGE
+from classes.weapon import Weapon
+from classes.weaponHitboxFrame import WeaponHitBoxFrame
+from classes.vector import Vector
 
 # Setup font
 pygame.font.init()
@@ -27,8 +29,8 @@ BGTILE = pygame.transform.scale(pygame.image.load("./imgs/backgroundTile.png"), 
 # Function to draw everthing on screen
 # Thins at the top of the function are at the bottom layer of the drawing
 # This means the background should be drawn first
-# Parameters: p1 (the player), elapsed_time (time elapsed), enemies (the enemies)
-def draw(p1, elapsed_time, enemies):
+# Parameters: hitboxes (an array of hitboxes to draw), elapsed_time (time elapsed)
+def draw(hitboxes, elapsed_time):
     # Set up tiling of background.
     for x in range(0, WIDTH, 100):
         for y in range(0, HEIGHT, 100):
@@ -44,12 +46,9 @@ def draw(p1, elapsed_time, enemies):
     if len(secs) == 1:
         secs = '0' + secs
 
-    # Draw player
-    p1.draw()
-
-    # Draw enemies
-    for en in enemies:
-        en.draw()
+    # Draw player/enemies/weapons
+    for hb in hitboxes:
+        hb.draw()
 
     # Draw elapsed time
     time_text = FONT.render(f"{mins}:{secs}:{mils}", 1, "white")
@@ -65,7 +64,18 @@ def main():
     run = True
 
     # Create the player (p1) in the center of the screen
-    p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100)
+    p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100, [])
+
+    # Create the initial weapon
+    # Set up the weapon hitboxes
+    weaponHBS = [
+        WeaponHitBoxFrame(45, -50, 10, 100, 60, 30, False, None, None),
+        WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, Vector(0,0), 2),
+    ]
+    w1 = Weapon(WIN, "white", weaponHBS, 5, p1)
+
+    # Give weapon to player
+    p1.addWeapon(w1)
 
     # Set up the enemies
     enemy_add_increment = 4000  # When an enemy is added
@@ -106,6 +116,8 @@ def main():
         # Get game start time, setup time tracking
         start_time = time.time()
         elapsed_time = 0
+        # Ticks - the number of times the game loop has run
+        ticks = 0
 
         while gamePlay:
             # Set the maximum number of times the while loop runs (Frames per second)
@@ -113,6 +125,8 @@ def main():
             enemy_count += clock.tick(60)
             # Increment elapsed time
             elapsed_time = time.time() - start_time
+            # Increment ticks
+            ticks+=1
 
             # Enemy spawn logic
             if enemy_count > enemy_add_increment:
@@ -180,6 +194,17 @@ def main():
                 p1.y += PLAYER_VEL
             # End key check
 
+            # Weapon logic here
+            for weapon in p1.weapons:
+                # Update weapons
+                weapon.update(ticks)
+                # Deal damage to enemies
+                for weaponHB in weapon.hitboxes:
+                    for en in enemies:
+                        if en.colliderect(weaponHB):
+                            en.currentHealth -= weapon.damage
+
+
             # Move the enemies towards the player, handle collision
             # Loop though a copy of the enemy list (Modifying list while looping causes errors)
             for en in enemies[:]:
@@ -196,7 +221,14 @@ def main():
             
                 
             # Call the draw function
-            draw(p1, elapsed_time, enemies)
+            # list of hitboxes to draw
+            drawHB = [p1]
+            for en in enemies:
+                drawHB.append(en)
+            for weapon in p1.weapons:
+                for weaponHB in weapon.hitboxes:
+                    drawHB.append(weaponHB)
+            draw(drawHB, elapsed_time)
         # End Gameplay
 
     # Close the window when the run loop has ended

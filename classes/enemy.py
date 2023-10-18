@@ -11,7 +11,7 @@ class Enemy(Hitbox):
     # Define the initialization function (called when a new object of the class is created)
     def __init__(self, window, x, y, currentHealth, maxHealth):
         # Call the parent class's initialization function
-        Hitbox.__init__(self, window, x, y, ENEMY_WIDTH, ENEMY_HEIGHT, "red")
+        super().__init__(window, x, y, ENEMY_WIDTH, ENEMY_HEIGHT, "red")
 
         # Set our current and max health
         self.currentHealth = currentHealth
