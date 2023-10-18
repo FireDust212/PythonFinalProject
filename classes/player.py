@@ -8,13 +8,16 @@ PLAYER_VEL = 5
 class Player(Hitbox):
 
     # Define the initialization function (called when a new object of the class is created)
-    def __init__(self, window, x, y, currentHealth, maxHealth):
+    def __init__(self, window, x, y, currentHealth, maxHealth, weapons):
         # Call the parent class's initialization function
-        Hitbox.__init__(self, window, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, "blue")
+        super().__init__(window, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, "blue")
 
         # Set our current and max health
         self.currentHealth = currentHealth
         self.maxHealth = maxHealth
+
+        # Set player's weapons
+        self.weapons = weapons
     
     # Define string representation for player
     def __str__(self):
@@ -23,3 +26,8 @@ class Player(Hitbox):
     # Define representation for player
     def __repr__(self):
         return f"Player: x:{self.x}, y:{self.y}, currentHealth: {self.currentHealth}, maxHealth: {self.maxHealth}"
+    
+
+    # Add weapons to the player
+    def addWeapon(self, weapon):
+        self.weapons.append(weapon)
