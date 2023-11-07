@@ -1,3 +1,4 @@
+import pygame
 from classes.hitbox import Hitbox
 
 # Constants
@@ -31,3 +32,10 @@ class Player(Hitbox):
     # Add weapons to the player
     def addWeapon(self, weapon):
         self.weapons.append(weapon)
+
+    # Player draw function - adds a healthbar
+    def draw(self):
+        pygame.draw.rect(self.window, self.color, (self.x, self.y, self.width, self.height))
+        if self.currentHealth < self.maxHealth:
+            pygame.draw.rect(self.window, "grey", (self.x - (self.width/10), self.y - (self.height/5), self.width + (self.width/5), (self.height/10)))
+            pygame.draw.rect(self.window, "green", (self.x - (self.width/10), self.y - (self.height/5), (self.currentHealth / self.maxHealth) * (self.width + (self.width/5)), (self.height/10)))
