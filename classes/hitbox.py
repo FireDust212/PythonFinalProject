@@ -69,5 +69,9 @@ class Hitbox(pygame.Rect):
     def hitTarget(self):
         pass
 
+    # Update function called during game ticks, will be used byt classes that extend hitbox
+    def update(self, tick):
+        pass
+
     def draw(self):
         pygame.draw.rect(self.window, self.color, (self.x, self.y, self.width, self.height))

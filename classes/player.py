@@ -32,6 +32,10 @@ class Player(Hitbox):
     # Add weapons to the player
     def addWeapon(self, weapon):
         self.weapons.append(weapon)
+    
+    # Player update function
+    def update(self, tick):
+        pass
 
     # Player draw function - adds a healthbar
     def draw(self):
