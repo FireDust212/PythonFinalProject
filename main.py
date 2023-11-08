@@ -217,9 +217,15 @@ def main():
                 for weaponHB in weapon.hitboxes:
                     for en in enemies:
                         if en.colliderect(weaponHB):
-                            en.currentHealth -= weapon.damage
+                            if not en.invincible:
+                                en.currentHealth -= weapon.damage
+                                en.invincible = True
 
 
+            # Update the hitboxes
+            p1.update(ticks)
+            for en in enemies: en.update(ticks)
+            
             # Move the enemies towards the player, handle collision
             # Loop though a copy of the enemy list (Modifying list while looping causes errors)
             for en in enemies[:]:
@@ -232,7 +238,9 @@ def main():
                     enemies.remove(en)
                     kills += 1
                 elif en.colliderect(p1):
-                    p1.currentHealth -= ENEMY_DAMAGE
+                    if not p1.invincible:
+                        p1.currentHealth -= ENEMY_DAMAGE
+                        p1.invincible = True
             # End enemy loop
             
             # Check player health

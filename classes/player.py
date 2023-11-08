@@ -35,7 +35,7 @@ class Player(Hitbox):
     
     # Player update function
     def update(self, tick):
-        pass
+        super().update(tick)
 
     # Player draw function - adds a healthbar
     def draw(self):
