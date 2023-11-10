@@ -24,13 +24,15 @@ pygame.display.set_caption("Shooty McShootface")
 
 # Import the tiling of the background
 BGTILE = pygame.transform.scale(pygame.image.load("./imgs/backgroundTile.png"), (100,100))
+# Import the skull for the kill tracker
+SKULL = pygame.transform.scale(pygame.image.load("./imgs/Skull.png"), (30,30))
 
 
 # Function to draw everthing on screen
 # Thins at the top of the function are at the bottom layer of the drawing
 # This means the background should be drawn first
-# Parameters: hitboxes (an array of hitboxes to draw), elapsed_time (time elapsed)
-def draw(hitboxes, elapsed_time):
+# Parameters: hitboxes (an array of hitboxes to draw), elapsed_time (time elapsed), kills(the number of enemies killed)
+def draw(hitboxes, elapsed_time, kills):
     # Set up tiling of background.
     for x in range(0, WIDTH, 100):
         for y in range(0, HEIGHT, 100):
@@ -54,6 +56,11 @@ def draw(hitboxes, elapsed_time):
     time_text = FONT.render(f"{mins}:{secs}:{mils}", 1, "white")
     WIN.blit(time_text, ((WIDTH - time_text.get_width()) / 2, 10))
 
+    # Draw kills text
+    kill_text = FONT.render(f"{kills}", 1, "white")
+    WIN.blit(kill_text, (WIDTH - kill_text.get_width(), 10))
+    WIN.blit(SKULL, (WIDTH - kill_text.get_width() - SKULL.get_width(), 10))
+
     # Update the display to apply the drawing
     pygame.display.update()
 
@@ -63,30 +70,31 @@ def main():
     # Variable for when the application is running
     run = True
 
-    # Create the player (p1) in the center of the screen
-    p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100, [])
-
-    # Create the initial weapon
-    # Set up the weapon hitboxes
-    weaponHBS = [
-        WeaponHitBoxFrame(45, -50, 10, 100, 60, 30, False, None, None),
-        WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, Vector(0,0), 2),
-    ]
-    w1 = Weapon(WIN, "white", weaponHBS, 5, p1)
-
-    # Give weapon to player
-    p1.addWeapon(w1)
-
-    # Set up the enemies
-    enemy_add_increment = 4000  # When an enemy is added
-    enemy_count = 0             # How long it has been since the last enemy was spawned
-    enemies = []                # List of enemies
-
     # Setup Clock
     clock = pygame.time.Clock()
 
     # Application loop
     while run:
+        # Create the player (p1) in the center of the screen
+        p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100, [])
+
+        # Create the initial weapon
+        # Set up the weapon hitboxes
+        target = Vector(0,0) # Set up the target for the projectile. Changing this will change the projectile target
+        weaponHBS = [
+            WeaponHitBoxFrame(45, -50, 10, 100, 60, 30, False, None, None),
+            WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, target, 2),
+        ]
+        w1 = Weapon(WIN, "white", weaponHBS, 5, p1)
+
+        # Give weapon to player
+        p1.addWeapon(w1)
+
+        # Set up the enemies
+        enemy_add_increment = 4000  # When an enemy is added
+        enemy_count = 0             # How long it has been since the last enemy was spawned
+        enemies = []                # List of enemies
+
         # Main menu
         mainMenu = True
         while mainMenu:
@@ -107,6 +115,7 @@ def main():
             # If the key is space, close the main menu - this is temporary behavior
             if keys[pygame.K_SPACE]:
                 mainMenu = False
+                keys = []
         # End main menu
 
 
@@ -118,6 +127,10 @@ def main():
         elapsed_time = 0
         # Ticks - the number of times the game loop has run
         ticks = 0
+
+        # Other variables to track that need to be set up outside the while loop
+        kills = 0
+        win = True
 
         while gamePlay:
             # Set the maximum number of times the while loop runs (Frames per second)
@@ -195,6 +208,8 @@ def main():
             # End key check
 
             # Weapon logic here
+            # target.x += 1
+            # target.y += 1
             for weapon in p1.weapons:
                 # Update weapons
                 weapon.update(ticks)
@@ -202,9 +217,15 @@ def main():
                 for weaponHB in weapon.hitboxes:
                     for en in enemies:
                         if en.colliderect(weaponHB):
-                            en.currentHealth -= weapon.damage
+                            if not en.invincible:
+                                en.currentHealth -= weapon.damage
+                                en.invincible = True
 
 
+            # Update the hitboxes
+            p1.update(ticks)
+            for en in enemies: en.update(ticks)
+            
             # Move the enemies towards the player, handle collision
             # Loop though a copy of the enemy list (Modifying list while looping causes errors)
             for en in enemies[:]:
@@ -215,10 +236,17 @@ def main():
                 # Remove enemies with health below 0
                 if en.currentHealth <= 0:
                     enemies.remove(en)
+                    kills += 1
                 elif en.colliderect(p1):
-                    p1.currentHealth -= ENEMY_DAMAGE
+                    if not p1.invincible:
+                        p1.currentHealth -= ENEMY_DAMAGE
+                        p1.invincible = True
             # End enemy loop
             
+            # Check player health
+            if p1.currentHealth <= 0:
+                win = False
+                gamePlay = False
                 
             # Call the draw function
             # list of hitboxes to draw
@@ -228,9 +256,55 @@ def main():
             for weapon in p1.weapons:
                 for weaponHB in weapon.hitboxes:
                     drawHB.append(weaponHB)
-            draw(drawHB, elapsed_time)
+            draw(drawHB, elapsed_time, kills)
+
+            # end game after 3 mins
+            if int(elapsed_time / 60) >= 3:
+                run = False
         # End Gameplay
 
+        # End Screen
+        endScreen = run
+        while endScreen:
+            # Set the maximum number of times the while loop runs (Frames per second)
+            clock.tick(60)
+
+            # Check all events that have happened since the last check
+            for event in pygame.event.get():
+                # User closed window with x
+                if event.type == pygame.QUIT:
+                    # Stop running the game and stop checking events
+                    endScreen = False
+                    run = False
+                    break
+            
+            # Check the keys pressed
+            keys = pygame.key.get_pressed()
+            # If the key is space, return to the main menu
+            if keys[pygame.K_SPACE]:
+                endScreen = False
+                keys = []
+
+            # Temp end screen
+            winMessage = ""
+            if win:
+                winMessage = 'You Win'
+            else:
+                winMessage = "You loser"
+            message_text = FONT.render(winMessage, 1, "white")
+            WIN.blit(message_text, ((WIDTH - message_text.get_width())/2, (HEIGHT - message_text.get_height())/2))
+            pygame.display.update()
+        # End end screen
+
+        # Delay to prevent instantly skipping the main menu
+        if run:
+            start_time = time.time()
+            elapsed_time = 0
+            while elapsed_time < 1:
+                # Increment elapsed time
+                elapsed_time = time.time() - start_time
+
+    # End run loop
     # Close the window when the run loop has ended
     pygame.quit()
 

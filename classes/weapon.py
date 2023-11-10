@@ -21,7 +21,7 @@ class Weapon():
         # The player this weapon should base its x and y values on
         self.player = player
         
-    # Class called every tick:
+    # Method called every tick:
     #   -   Remove old hitboxes
     #   -   Add active hitboxes
     #   -   Move projectiles

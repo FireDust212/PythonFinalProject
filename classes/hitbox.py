@@ -15,6 +15,11 @@ class Hitbox(pygame.Rect):
         
         # Bool to track if the hitbox should be deleted
         self.deleteMe = False
+
+        # Invincibility frame tracking
+        self.invincible = False
+        self.maxIFrames = 20
+        self.IFrame = 0
     
     # Define string representation for hitbox
     def __str__(self):
@@ -68,6 +73,15 @@ class Hitbox(pygame.Rect):
     # this will be used by classes that extend hitbox.
     def hitTarget(self):
         pass
+
+    # Update function called during game ticks, will be used byt classes that extend hitbox
+    # For hitboxes with invincibility frames, update them
+    def update(self, tick):
+        if self.invincible:
+            self.IFrame += 1
+            if self.IFrame >= self.maxIFrames:
+                self.invincible = False
+                self.IFrame = 0
 
     def draw(self):
         pygame.draw.rect(self.window, self.color, (self.x, self.y, self.width, self.height))
