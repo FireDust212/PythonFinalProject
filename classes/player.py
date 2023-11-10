@@ -17,10 +17,13 @@ class Player(Hitbox):
         # Set our current and max health, and health regen
         self.currentHealth = currentHealth
         self.maxHealth = maxHealth
-        self.regen = .01
+        self.regen = 5/60
 
         # Set player's weapons
         self.weapons = weapons
+
+        # Set player level to 0
+        self.level = 0
     
     # Define string representation for player
     def __str__(self):
@@ -38,7 +41,7 @@ class Player(Hitbox):
     # Player update function
     def update(self, tick):
         super().update(tick)
-        self.currentHealth += self.regen
+        if self.currentHealth < self.maxHealth: self.currentHealth += self.regen
 
     # Player draw function - adds a healthbar
     def draw(self):
@@ -46,3 +49,19 @@ class Player(Hitbox):
         if self.currentHealth < self.maxHealth:
             pygame.draw.rect(self.window, "grey", (self.x - (self.width/10), self.y - (self.height/5), self.width + (self.width/5), (self.height/10)))
             pygame.draw.rect(self.window, "green", (self.x - (self.width/10), self.y - (self.height/5), (self.currentHealth / self.maxHealth) * (self.width + (self.width/5)), (self.height/10)))
+
+
+    # Get next level function: returns a levelUpOption
+    def getNextLevel(self):
+        return LevelUpOption(self.window, 'Player', self.level+1, ["Heal 10% HP","HP +10", "Regen/second +1", "All Weapon Damage +10%"],self)
+    
+    # Level Up player
+    def levelUp(self):
+        self.currentHealth += .1*self.maxHealth
+        self.regen = (self.regen*60 + 1) / 60
+        self.maxHealth += 10
+
+        for weapon in self.weapons:
+            weapon.damage *= 1.1
+        
+        self.level += 1

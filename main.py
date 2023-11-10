@@ -11,16 +11,11 @@ from classes.weaponHitboxFrame import WeaponHitBoxFrame
 from classes.vector import Vector
 
 # Import weapons
-from weapons import WEAPONHITBOXES
+from weapons import WEAPONSETUP
 
-# Setup font
-pygame.font.init()
-FONT = pygame.font.SysFont("consolas", 30)
+# Import window things - this prevents some cicuitous imports
+from setupVars import BIGFONT, WIDTH, HEIGHT, WIN
 
-
-# Set up the window
-WIDTH, HEIGHT = 1000, 800
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 # Give the window a name 
 pygame.display.set_caption("Shooty McShootface")
 
@@ -56,11 +51,11 @@ def draw(hitboxes, elapsed_time, kills, update = True):
         hb.draw()
 
     # Draw elapsed time
-    time_text = FONT.render(f"{mins}:{secs}:{mils}", 1, "white")
+    time_text = BIGFONT.render(f"{mins}:{secs}:{mils}", 1, "white")
     WIN.blit(time_text, ((WIDTH - time_text.get_width()) / 2, 10))
 
     # Draw kills text
-    kill_text = FONT.render(f"{kills}", 1, "white")
+    kill_text = BIGFONT.render(f"{kills}", 1, "white")
     WIN.blit(kill_text, (WIDTH - kill_text.get_width(), 10))
     WIN.blit(SKULL, (WIDTH - kill_text.get_width() - SKULL.get_width(), 10))
 
@@ -80,11 +75,13 @@ def drawLevelUp(elapsed_time, kills, levelUpOptions):
     WIN.blit(mask, (0,0))                   # Add the mask to the window
 
     # Draw Level Up Title
-    level_up_title = FONT.render(f"Level Up!", 1, "white")
+    level_up_title = BIGFONT.render(f"Level Up!", 1, "white")
     WIN.blit(level_up_title, ((WIDTH - level_up_title.get_width()) / 2, 40))
     
     # Draw the levelUp options
-
+    for y in range(len(levelUpOptions)):
+        levelUpOptions[y].y = 50 + BIGFONT.get_height() + (20 + levelUpOptions[y].height) * y
+        levelUpOptions[y].draw()
 
     # Update the display to apply the drawing
     pygame.display.update()
@@ -101,7 +98,7 @@ def main():
     clock = pygame.time.Clock()
 
     # Hit space reminder
-    hit_space = FONT.render("Hit Space", 1, "white")
+    hit_space = BIGFONT.render("Hit Space", 1, "white")
 
 
     # Application loop
@@ -110,8 +107,8 @@ def main():
         p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100, [])
 
         # Create weapons, give to player
-        for setter in WEAPONHITBOXES:
-            wep = Weapon(WIN, WEAPONHITBOXES[setter]['color'], WEAPONHITBOXES[setter]['hbs'], WEAPONHITBOXES[setter]['damage'],p1)
+        for weaponName in WEAPONSETUP:
+            wep = Weapon(WIN, WEAPONSETUP[weaponName]['color'], weaponName,  WEAPONSETUP[weaponName]['hbs'], WEAPONSETUP[weaponName]['damage'], p1, WEAPONSETUP[weaponName]['levelUp'])
             p1.addWeapon(wep)
 
         # Set up the enemies
@@ -142,7 +139,7 @@ def main():
                 keys = []
             
             # Tell the user to hit space
-            hit_space = FONT.render("Hit Space", 1, "white")
+            hit_space = BIGFONT.render("Hit Space", 1, "white")
             WIN.blit(hit_space, ((WIDTH - hit_space.get_width())/2, (HEIGHT - hit_space.get_height())/2 + hit_space.get_height()))
             pygame.display.update()
 
@@ -286,14 +283,19 @@ def main():
                 gamePlay = False
             
 
-            # LevelUp Loop
-            while levelUp:
+            # LevelUp Loop setup
+            if levelUp:
                 # Determine the level up options
                 levelUpOptions = [p1.getNextLevel()]
                 for weapon in p1.weapons:
-                    levelUpOptions.append(weapon.getNextLevel())
-
-
+                    if weapon.level < weapon.maxLevel:
+                        levelUpOptions.append(weapon.getNextLevel())
+                
+                if len(levelUpOptions) > 3:
+                    random.shuffle(levelUpOptions)
+                    levelUpOptions = levelUpOptions[0:3]
+            # LevelUp Loop
+            while levelUp:
                 # Check all events that have happened since the last check
                 for event in pygame.event.get():
                     # User closed window with x
@@ -307,7 +309,12 @@ def main():
                     elif event.type == pygame.MOUSEBUTTONUP:
                         # Get mouse position
                         pos = pygame.mouse.get_pos()
-                        levelUp = False
+                        # Check if mouse is in a level up option
+                        for option in levelUpOptions:
+                            if option.collidepoint(pos):
+                                option.origin.levelUp()
+                                levelUp = False
+                                break
 
                 # Draw the levelUp screen
                 drawLevelUp(elapsed_time, kills, levelUpOptions)
@@ -356,7 +363,7 @@ def main():
                 winMessage = 'You Win'
             else:
                 winMessage = "You loser"
-            message_text = FONT.render(winMessage, 1, "white")
+            message_text = BIGFONT.render(winMessage, 1, "white")
             WIN.blit(hit_space, ((WIDTH - hit_space.get_width())/2, (HEIGHT - hit_space.get_height())/2 + hit_space.get_height()))
             WIN.blit(message_text, ((WIDTH - message_text.get_width())/2, (HEIGHT - message_text.get_height())/2))
             pygame.display.update()
