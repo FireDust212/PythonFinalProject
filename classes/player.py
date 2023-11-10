@@ -1,5 +1,6 @@
 import pygame
 from classes.hitbox import Hitbox
+from classes.levelUpOption import LevelUpOption
 
 # Constants
 PLAYER_HEIGHT, PLAYER_WIDTH = 50, 50
