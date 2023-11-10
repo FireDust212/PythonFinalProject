@@ -10,6 +10,9 @@ from classes.weapon import Weapon
 from classes.weaponHitboxFrame import WeaponHitBoxFrame
 from classes.vector import Vector
 
+# Import weapons
+from weapons import WEAPONHITBOXES
+
 # Setup font
 pygame.font.init()
 FONT = pygame.font.SysFont("consolas", 30)
@@ -32,14 +35,14 @@ SKULL = pygame.transform.scale(pygame.image.load("./imgs/Skull.png"), (30,30))
 # Thins at the top of the function are at the bottom layer of the drawing
 # This means the background should be drawn first
 # Parameters: hitboxes (an array of hitboxes to draw), elapsed_time (time elapsed), kills(the number of enemies killed)
-def draw(hitboxes, elapsed_time, kills):
+def draw(hitboxes, elapsed_time, kills, update = True):
     # Set up tiling of background.
     for x in range(0, WIDTH, 100):
         for y in range(0, HEIGHT, 100):
             WIN.blit(BGTILE, (x,y))
     
     # Format elapsed time to min:sec
-    mins = str(int(elapsed_time / 60))
+    mins = str(elapsed_time // 60)
     secs = str(int(elapsed_time % 60))
     mils = str(int(elapsed_time*100))[-2:]
     # Add leading 0s
@@ -62,7 +65,31 @@ def draw(hitboxes, elapsed_time, kills):
     WIN.blit(SKULL, (WIDTH - kill_text.get_width() - SKULL.get_width(), 10))
 
     # Update the display to apply the drawing
+    if update: pygame.display.update()
+# End Draw
+
+# Drawing the level up screen
+def drawLevelUp(elapsed_time, kills, levelUpOptions):
+    # Draw regular screen
+    draw([], elapsed_time, kills, False)
+
+    # Draw a mask over the regular gameplay
+    mask = pygame.Surface((WIDTH,HEIGHT))   # Create a surface
+    mask.set_alpha(128)                     # Set it's alpha level
+    mask.fill((0,0,0))                # this fills the entire surface
+    WIN.blit(mask, (0,0))                   # Add the mask to the window
+
+    # Draw Level Up Title
+    level_up_title = FONT.render(f"Level Up!", 1, "white")
+    WIN.blit(level_up_title, ((WIDTH - level_up_title.get_width()) / 2, 40))
+    
+    # Draw the levelUp options
+
+
+    # Update the display to apply the drawing
     pygame.display.update()
+# End Draw Level Up
+
 
 
 # Main game function
@@ -73,22 +100,19 @@ def main():
     # Setup Clock
     clock = pygame.time.Clock()
 
+    # Hit space reminder
+    hit_space = FONT.render("Hit Space", 1, "white")
+
+
     # Application loop
     while run:
         # Create the player (p1) in the center of the screen
         p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100, [])
 
-        # Create the initial weapon
-        # Set up the weapon hitboxes
-        target = Vector(0,0) # Set up the target for the projectile. Changing this will change the projectile target
-        weaponHBS = [
-            WeaponHitBoxFrame(45, -50, 10, 100, 60, 30, False, None, None),
-            WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, target, 2),
-        ]
-        w1 = Weapon(WIN, "white", weaponHBS, 5, p1)
-
-        # Give weapon to player
-        p1.addWeapon(w1)
+        # Create weapons, give to player
+        for setter in WEAPONHITBOXES:
+            wep = Weapon(WIN, WEAPONHITBOXES[setter]['color'], WEAPONHITBOXES[setter]['hbs'], WEAPONHITBOXES[setter]['damage'],p1)
+            p1.addWeapon(wep)
 
         # Set up the enemies
         enemy_add_increment = 4000  # When an enemy is added
@@ -116,11 +140,18 @@ def main():
             if keys[pygame.K_SPACE]:
                 mainMenu = False
                 keys = []
+            
+            # Tell the user to hit space
+            hit_space = FONT.render("Hit Space", 1, "white")
+            WIN.blit(hit_space, ((WIDTH - hit_space.get_width())/2, (HEIGHT - hit_space.get_height())/2 + hit_space.get_height()))
+            pygame.display.update()
+
         # End main menu
 
 
         # Gameplay
         gamePlay = run
+        levelUp = False
 
         # Get game start time, setup time tracking
         start_time = time.time()
@@ -130,6 +161,7 @@ def main():
 
         # Other variables to track that need to be set up outside the while loop
         kills = 0
+        killsToLevelUp = 10
         win = True
 
         while gamePlay:
@@ -144,7 +176,7 @@ def main():
             # Enemy spawn logic
             if enemy_count > enemy_add_increment:
                 # Value in range is the number of enemies to add
-                for _ in range(1):
+                for _ in range(5):
                     # Setup baseline enemy position
                     # Pick a random x value for the enemy
                     enemy_x = random.randint(0, WIDTH - ENEMY_WIDTH)
@@ -169,7 +201,8 @@ def main():
                         enemy_y = HEIGHT + ENEMY_HEIGHT
 
                     # Create the enemy
-                    en = Enemy(WIN, enemy_x, enemy_y, 10, 10)
+                    enhp = 10*(1 + elapsed_time // 60) # enemy health increses each minute
+                    en = Enemy(WIN, enemy_x, enemy_y, enhp, enhp)
                     enemies.append(en)
 
                 # Reset enemy_count and subtract 10 from enemy_add_increment (minimum of 200)
@@ -237,6 +270,10 @@ def main():
                 if en.currentHealth <= 0:
                     enemies.remove(en)
                     kills += 1
+                    # Check levelup condition
+                    if kills >= killsToLevelUp: 
+                        levelUp = run
+                        killsToLevelUp *= 1.5
                 elif en.colliderect(p1):
                     if not p1.invincible:
                         p1.currentHealth -= ENEMY_DAMAGE
@@ -247,10 +284,38 @@ def main():
             if p1.currentHealth <= 0:
                 win = False
                 gamePlay = False
+            
+
+            # LevelUp Loop
+            while levelUp:
+                # Determine the level up options
+                levelUpOptions = [p1.getNextLevel()]
+                for weapon in p1.weapons:
+                    levelUpOptions.append(weapon.getNextLevel())
+
+
+                # Check all events that have happened since the last check
+                for event in pygame.event.get():
+                    # User closed window with x
+                    if event.type == pygame.QUIT:
+                        # Stop running the game and stop checking events
+                        levelUp = False
+                        gamePlay = False
+                        run = False
+                        break
+                    # User clicked a part of the screen
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        # Get mouse position
+                        pos = pygame.mouse.get_pos()
+                        levelUp = False
+
+                # Draw the levelUp screen
+                drawLevelUp(elapsed_time, kills, levelUpOptions)
+            # end levelUp
+
                 
             # Call the draw function
-            # list of hitboxes to draw
-            drawHB = [p1]
+            drawHB = [p1] # list of hitboxes to draw
             for en in enemies:
                 drawHB.append(en)
             for weapon in p1.weapons:
@@ -259,7 +324,7 @@ def main():
             draw(drawHB, elapsed_time, kills)
 
             # end game after 3 mins
-            if int(elapsed_time / 60) >= 3:
+            if elapsed_time // 60 >= 3:
                 run = False
         # End Gameplay
 
@@ -292,6 +357,7 @@ def main():
             else:
                 winMessage = "You loser"
             message_text = FONT.render(winMessage, 1, "white")
+            WIN.blit(hit_space, ((WIDTH - hit_space.get_width())/2, (HEIGHT - hit_space.get_height())/2 + hit_space.get_height()))
             WIN.blit(message_text, ((WIDTH - message_text.get_width())/2, (HEIGHT - message_text.get_height())/2))
             pygame.display.update()
         # End end screen

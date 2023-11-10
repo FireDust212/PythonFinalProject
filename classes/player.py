@@ -13,9 +13,10 @@ class Player(Hitbox):
         # Call the parent class's initialization function
         super().__init__(window, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, "blue")
 
-        # Set our current and max health
+        # Set our current and max health, and health regen
         self.currentHealth = currentHealth
         self.maxHealth = maxHealth
+        self.regen = .01
 
         # Set player's weapons
         self.weapons = weapons
@@ -36,6 +37,7 @@ class Player(Hitbox):
     # Player update function
     def update(self, tick):
         super().update(tick)
+        self.currentHealth += self.regen
 
     # Player draw function - adds a healthbar
     def draw(self):
