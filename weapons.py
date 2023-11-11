@@ -18,7 +18,7 @@ WEAPONSETUP = {
                     'color':'white', 
                     'damage': 10,
                     'hbs':  [
-                                WeaponHitBoxFrame(PLAYER_WIDTH+10, -PLAYER_HEIGHT/2, 10, PLAYER_HEIGHT, 60, 30, False, None, None)
+                                WeaponHitBoxFrame(PLAYER_WIDTH+20, -PLAYER_HEIGHT/2, 10, PLAYER_HEIGHT*2, 60, 30, False, None, None)
                             ],
                     'levelUp':[
                         {
@@ -27,7 +27,7 @@ WEAPONSETUP = {
                             "cooldown": 0,
                             'duration': 0,
                             'hb': [
-                                WeaponHitBoxFrame(-10, -PLAYER_HEIGHT*1.5, 10, PLAYER_HEIGHT, 60, 30, False, None, None)
+                                WeaponHitBoxFrame(-30, -PLAYER_HEIGHT/2, 10, PLAYER_HEIGHT*2, 60, 30, False, None, None)
                             ],
                         },
                         {
@@ -42,7 +42,7 @@ WEAPONSETUP = {
                             'damage': 20,
                             "cooldown": -20,
                             'duration': 5,
-                            'hb': [WeaponHitBoxFrame(PLAYER_WIDTH - (PLAYER_WIDTH/4), -PLAYER_HEIGHT/2, PLAYER_WIDTH, 10, 60, 30, False, None, None)],
+                            'hb': [WeaponHitBoxFrame(PLAYER_WIDTH - (PLAYER_WIDTH/4), -PLAYER_HEIGHT/2, PLAYER_WIDTH*2, 10, 60, 30, False, None, None)],
                         }
                     ]
                 },

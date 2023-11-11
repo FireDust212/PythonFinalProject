@@ -37,7 +37,7 @@ def draw(hitboxes, elapsed_time, kills, update = True):
             WIN.blit(BGTILE, (x,y))
     
     # Format elapsed time to min:sec
-    mins = str(elapsed_time // 60)
+    mins = str(int(elapsed_time / 60))
     secs = str(int(elapsed_time % 60))
     mils = str(int(elapsed_time*100))[-2:]
     # Add leading 0s
@@ -55,7 +55,7 @@ def draw(hitboxes, elapsed_time, kills, update = True):
     WIN.blit(time_text, ((WIDTH - time_text.get_width()) / 2, 10))
 
     # Draw kills text
-    kill_text = BIGFONT.render(f"{kills}", 1, "white")
+    kill_text = BIGFONT.render(kills, 1, "white")
     WIN.blit(kill_text, (WIDTH - kill_text.get_width(), 10))
     WIN.blit(SKULL, (WIDTH - kill_text.get_width() - SKULL.get_width(), 10))
 
@@ -106,9 +106,10 @@ def main():
         # Create the player (p1) in the center of the screen
         p1 = Player(WIN, (WIDTH / 2) - (PLAYER_WIDTH / 2), (HEIGHT / 2) - (PLAYER_HEIGHT / 2), 100, 100, [])
 
+
         # Create weapons, give to player
-        for weaponName in WEAPONSETUP:
-            wep = Weapon(WIN, WEAPONSETUP[weaponName]['color'], weaponName,  WEAPONSETUP[weaponName]['hbs'], WEAPONSETUP[weaponName]['damage'], p1, WEAPONSETUP[weaponName]['levelUp'])
+        for weaponName in WEAPONSETUP.copy():
+            wep = Weapon(WIN, WEAPONSETUP[weaponName]['color'], weaponName,  WEAPONSETUP[weaponName]['hbs'][:], WEAPONSETUP[weaponName]['damage'], p1, WEAPONSETUP[weaponName]['levelUp'][:])
             p1.addWeapon(wep)
 
         # Set up the enemies
@@ -270,7 +271,7 @@ def main():
                     # Check levelup condition
                     if kills >= killsToLevelUp: 
                         levelUp = run
-                        killsToLevelUp *= 1.5
+                        killsToLevelUp += int(killsToLevelUp * 1.25 / 10) * 10
                 elif en.colliderect(p1):
                     if not p1.invincible:
                         p1.currentHealth -= ENEMY_DAMAGE
@@ -317,7 +318,7 @@ def main():
                                 break
 
                 # Draw the levelUp screen
-                drawLevelUp(elapsed_time, kills, levelUpOptions)
+                drawLevelUp(elapsed_time, f"{kills}/{killsToLevelUp}", levelUpOptions)
             # end levelUp
 
                 
@@ -328,11 +329,12 @@ def main():
             for weapon in p1.weapons:
                 for weaponHB in weapon.hitboxes:
                     drawHB.append(weaponHB)
-            draw(drawHB, elapsed_time, kills)
+            draw(drawHB, elapsed_time, f"{kills}/{killsToLevelUp}")
 
             # end game after 3 mins
-            if elapsed_time // 60 >= 3:
-                run = False
+            if elapsed_time // 60 >= 1:
+            # if elapsed_time >20: #- testing
+                gamePlay = False
         # End Gameplay
 
         # End Screen
@@ -376,6 +378,25 @@ def main():
             while elapsed_time < 1:
                 # Increment elapsed time
                 elapsed_time = time.time() - start_time
+        
+        # Cleanup before restarting the game
+        for x in range(len(p1.weapons)):
+            for y in range(len(p1.weapons[x].hitboxes)):
+                p1.weapons[x].hitboxes[y] = None
+            p1.weapons[x].hitboxes = None
+            for z in range(len(p1.weapons[x].hitboxSetup)):
+                p1.weapons[x].hitboxSetup[z] = None
+            p1.weapons[x].hitboxSetup = None
+            p1.weapons[x] = None
+        p1.weapons = None
+        del p1.weapons
+        for en in enemies:
+            en = None
+            del en
+        enemies = None
+        del enemies
+        p1 = None
+        del p1
 
     # End run loop
     # Close the window when the run loop has ended
