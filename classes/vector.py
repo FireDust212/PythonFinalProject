@@ -34,3 +34,6 @@ class Vector():
             unitV = Vector(self.x/magn, self.y/magn)
             return unitV
     
+    # Distance to another vector
+    def distTo(self, target):
+        return math.sqrt(abs((self.x-target.x)**2 + (self.y-target.y)**2))

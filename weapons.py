@@ -5,10 +5,7 @@ from classes.weapon import Weapon
 from classes.weaponHitboxFrame import WeaponHitBoxFrame
 from classes.vector import Vector
 from classes.player import PLAYER_WIDTH, PLAYER_HEIGHT
-
-
-# Set up the target for the projectile. Changing this will change the projectile target
-target = Vector(0,0) 
+from setupVars import close_enemy, far_enemy, rand_enemy
 
 # Set up the weapons
 # Hitboxes: x, y, width, height, startTick, duration, isProjectile, target, speed)
@@ -50,22 +47,22 @@ WEAPONSETUP = {
                     'color':'black', 
                     'damage': 5,
                     'hbs':  [
-                                WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, target, 2)
+                                WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, close_enemy, 2)
                             ],
                     'levelUp':[
                         {
-                            "description": ["Damage +10"],
+                            "description": ["Damage +10", 'Projectiles +1'],
                             'damage': 10,
                             "cooldown": 0,
                             'duration': 0,
-                            'hb': [],
+                            'hb': [WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, rand_enemy, 2)],
                         },
                         {
-                            "description": ["Damage +20"],
+                            "description": ["Damage +20", 'Projectiles +1'],
                             'damage': 20,
                             "cooldown": 0,
                             'duration': 0,
-                            'hb': [],
+                            'hb': [WeaponHitBoxFrame(PLAYER_WIDTH/2, PLAYER_HEIGHT/2, 10, 20, 120, 1, True, far_enemy, 2)],
                         },
                         {
                             "description": ["Damage +30"],

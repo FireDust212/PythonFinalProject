@@ -34,7 +34,7 @@ class Weapon():
     #   -   Remove old hitboxes
     #   -   Add active hitboxes
     #   -   Move projectiles
-    def update(self, tick):
+    def update(self, tick, closest, furthest, rand):
         # Remove old non-projectile hitboxes (loop though a copy) and projectiles that have hit their target
         for hitBox in self.hitboxes[:]:
             if hitBox.isProjectile == False:
@@ -49,7 +49,13 @@ class Weapon():
             if setup.isActive(tick):
                 # Make projectiles
                 if setup.isProjectile:
-                    self.hitboxes.append(Projectile(self.window, self.player.x + setup.x, self.player.y + setup.y, setup.width, setup.height, self.color, setup.target, setup.speed))
+                    if setup.targetKey == 'close':
+                        targ = closest
+                    elif setup.targetKey == 'far':
+                        targ = furthest
+                    else:
+                        targ = rand
+                    self.hitboxes.append(Projectile(self.window, self.player.x + setup.x, self.player.y + setup.y, setup.width, setup.height, self.color, targ, setup.speed))
                 # Make other hitboxes
                 else:
                     self.hitboxes.append(WeaponHB(self.window, self.player.x + setup.x, self.player.y + setup.y, setup.width, setup.height, self.color))
@@ -58,6 +64,7 @@ class Weapon():
         for hitbox in self.hitboxes:
             if hitbox.isProjectile:
                 hitbox.move()
+                # print(f"HB targ: {hitbox.target}")
 
 
     # Get next level function: returns a levelUpOption

@@ -238,12 +238,29 @@ def main():
                 p1.y += PLAYER_VEL
             # End key check
 
+            # Get closest, furthest, and a random enemy
+            close_enemy_pos, far_enemy_pos, rand_enemy_pos = Vector(0,0),Vector(0,0),Vector(0,0)
+            if len(enemies) > 0:
+                re = random.choice(enemies)
+                rand_enemy_pos = Vector(re.x, re.y)
+
+                short = WIDTH*HEIGHT
+                long = 0
+                for en in enemies:
+                    dist = Vector(p1.x,p1.y).distTo(en)
+                    if dist > long:
+                        long = dist
+                        far_enemy_pos = Vector(en.x,en.y)
+                    if dist < short:
+                        short = dist
+                        close_enemy_pos = Vector(en.x,en.y)
+
             # Weapon logic here
             # target.x += 1
             # target.y += 1
             for weapon in p1.weapons:
                 # Update weapons
-                weapon.update(ticks)
+                weapon.update(ticks, close_enemy_pos, far_enemy_pos, rand_enemy_pos)
                 # Deal damage to enemies
                 for weaponHB in weapon.hitboxes:
                     for en in enemies:
@@ -332,7 +349,7 @@ def main():
             draw(drawHB, elapsed_time, f"{kills}/{killsToLevelUp}")
 
             # end game after 3 mins
-            if elapsed_time // 60 >= 1:
+            if elapsed_time // 60 >= 3:
             # if elapsed_time >20: #- testing
                 gamePlay = False
         # End Gameplay
