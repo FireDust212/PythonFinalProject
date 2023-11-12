@@ -48,7 +48,7 @@ class Player(Hitbox):
         pygame.draw.rect(self.window, self.color, (self.x, self.y, self.width, self.height))
         if self.currentHealth < self.maxHealth:
             pygame.draw.rect(self.window, "grey", (self.x - (self.width/10), self.y - (self.height/5), self.width + (self.width/5), (self.height/10)))
-            pygame.draw.rect(self.window, "green", (self.x - (self.width/10), self.y - (self.height/5), (self.currentHealth / self.maxHealth) * (self.width + (self.width/5)), (self.height/10)))
+            pygame.draw.rect(self.window, "green", (self.x - (self.width/10), self.y - (self.height/5), (self.currentHealth / self.maxHealth) * (self.width + 2*(self.width/5)), (self.height/10)))
 
 
     # Get next level function: returns a levelUpOption

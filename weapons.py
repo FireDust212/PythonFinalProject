@@ -84,17 +84,17 @@ WEAPONSETUP = {
                             ],
                     'levelUp':[
                         {
-                            "description": ['Damage +5', 'Cooldown -10', 'Duration +10'],
+                            "description": ['Damage +5', 'Duration +10'],
                             'damage': 5,
-                            "cooldown": -10,
+                            "cooldown": 0,
                             'duration': 10,
                             'hb': [],
                         },
                         {
-                            "description": ["Greater Area", 'Damage +5', 'Cooldown -10', 'Duration -10'],
+                            "description": ["Greater Area", 'Damage +5', 'Duration -30'],
                             'damage': 5,
-                            "cooldown": -10,
-                            'duration': -10,
+                            "cooldown": 0,
+                            'duration': -30,
                             'hb': [
                                 WeaponHitBoxFrame(-PLAYER_WIDTH, -PLAYER_HEIGHT, PLAYER_WIDTH*3, 5, 40, 10, False, None, None),
                                 WeaponHitBoxFrame(-PLAYER_WIDTH, -PLAYER_HEIGHT, 5, PLAYER_HEIGHT*3, 40, 10, False, None, None),
@@ -103,10 +103,10 @@ WEAPONSETUP = {
                             ],
                         },
                         {
-                            "description": ["Greater Area", 'Damage +5', 'Cooldown -10', 'Duration +10'],
+                            "description": ["Greater Area", 'Damage +5', 'Duration +30'],
                             'damage': 5,
-                            "cooldown": -10,
-                            'duration': +10,
+                            "cooldown": 0,
+                            'duration': 30,
                             'hb': [
                                 WeaponHitBoxFrame(-2*PLAYER_WIDTH, -2*PLAYER_HEIGHT, PLAYER_WIDTH*5, 5, 50, 10, False, None, None),
                                 WeaponHitBoxFrame(-2*PLAYER_WIDTH, -2*PLAYER_HEIGHT, 5, PLAYER_HEIGHT*5, 50, 10, False, None, None),

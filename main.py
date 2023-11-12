@@ -160,6 +160,7 @@ def main():
         # Other variables to track that need to be set up outside the while loop
         kills = 0
         killsToLevelUp = 10
+        levels = 1
         win = True
 
         while gamePlay:
@@ -199,7 +200,7 @@ def main():
                         enemy_y = HEIGHT + ENEMY_HEIGHT
 
                     # Create the enemy
-                    enhp = 10*(1 + elapsed_time // 60) # enemy health increses each minute
+                    enhp = 15 + int(elapsed_time) # enemy health increses each minute
                     en = Enemy(WIN, enemy_x, enemy_y, enhp, enhp)
                     enemies.append(en)
 
@@ -288,7 +289,8 @@ def main():
                     # Check levelup condition
                     if kills >= killsToLevelUp: 
                         levelUp = run
-                        killsToLevelUp += int(killsToLevelUp * 1.25 / 10) * 10
+                        killsToLevelUp += 5*levels
+                        levels += 1
                 elif en.colliderect(p1):
                     if not p1.invincible:
                         p1.currentHealth -= ENEMY_DAMAGE
