@@ -74,13 +74,13 @@ WEAPONSETUP = {
                     ]
                 },
     "shield":   {
-                    'color':'green', 
+                    'color':'orange', 
                     'damage': 5,
                     'hbs':  [
-                                WeaponHitBoxFrame(0, 0, PLAYER_WIDTH, 5, 30, 10, False, None, None),
-                                WeaponHitBoxFrame(0, 0, 5, PLAYER_HEIGHT, 30, 10, False, None, None),
-                                WeaponHitBoxFrame(PLAYER_WIDTH, 0, 5, PLAYER_HEIGHT+5, 30, 10, False, None, None),
-                                WeaponHitBoxFrame(0, PLAYER_HEIGHT, PLAYER_WIDTH, 5, 30, 10, False, None, None)
+                                WeaponHitBoxFrame(-10, -10, PLAYER_WIDTH+15, 5, 30, 10, False, None, None),
+                                WeaponHitBoxFrame(-10, -10, 5, PLAYER_HEIGHT+15, 30, 10, False, None, None),
+                                WeaponHitBoxFrame(PLAYER_WIDTH+5, -10, 5, PLAYER_HEIGHT+20, 30, 10, False, None, None),
+                                WeaponHitBoxFrame(-10, PLAYER_HEIGHT+5, PLAYER_WIDTH+15, 5, 30, 10, False, None, None)
                             ],
                     'levelUp':[
                         {
@@ -91,10 +91,10 @@ WEAPONSETUP = {
                             'hb': [],
                         },
                         {
-                            "description": ["Greater Area", 'Damage +5', 'Duration -30'],
+                            "description": ["Greater Area", 'Damage +5', 'Duration -5'],
                             'damage': 5,
                             "cooldown": 0,
-                            'duration': -30,
+                            'duration': -5,
                             'hb': [
                                 WeaponHitBoxFrame(-PLAYER_WIDTH, -PLAYER_HEIGHT, PLAYER_WIDTH*3, 5, 40, 10, False, None, None),
                                 WeaponHitBoxFrame(-PLAYER_WIDTH, -PLAYER_HEIGHT, 5, PLAYER_HEIGHT*3, 40, 10, False, None, None),
@@ -103,10 +103,10 @@ WEAPONSETUP = {
                             ],
                         },
                         {
-                            "description": ["Greater Area", 'Damage +5', 'Duration +30'],
+                            "description": ["Greater Area", 'Damage +5', 'Duration +25'],
                             'damage': 5,
                             "cooldown": 0,
-                            'duration': 30,
+                            'duration': 25,
                             'hb': [
                                 WeaponHitBoxFrame(-2*PLAYER_WIDTH, -2*PLAYER_HEIGHT, PLAYER_WIDTH*5, 5, 50, 10, False, None, None),
                                 WeaponHitBoxFrame(-2*PLAYER_WIDTH, -2*PLAYER_HEIGHT, 5, PLAYER_HEIGHT*5, 50, 10, False, None, None),
