@@ -411,13 +411,6 @@ def main():
             pygame.display.update()
         # End end screen
 
-        # Delay to prevent instantly skipping the main menu
-        if run:
-            start_time = time.time()
-            elapsed_time = 0
-            while elapsed_time < 1:
-                # Increment elapsed time
-                elapsed_time = time.time() - start_time
         
         # Cleanup before restarting the game
         for x in range(len(p1.weapons)):
