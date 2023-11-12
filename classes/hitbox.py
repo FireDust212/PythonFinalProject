@@ -48,8 +48,8 @@ class Hitbox(pygame.Rect):
             # Check to see if the hitboxes will collide
             # Set up a false hitbox for the hitbox's next position
             nextPos = pygame.Rect(self.x, self.y, self.width, self.height)
-            nextPos.x -= round(move.x)
-            nextPos.y -= round(move.y)
+            nextPos.x = round(nextPos.x - move.x)
+            nextPos.y = round(nextPos.y - move.y)
 
             # Bool for collision
             hit = False
@@ -62,8 +62,13 @@ class Hitbox(pygame.Rect):
             
             # Move this hitbox if it will not collide
             if hit == False:
-                self.x -= round(move.x)
-                self.y -= round(move.y)
+                self.x = round(self.x - move.x)
+                self.y = round(self.y - move.y)
+                # print(str(self.x) + ',' + str(self.y))
+            
+            # Prevent projectiles from getting stuck
+            if abs(self.x - target.x) < velocity and abs(self.y - target.y) < velocity: self.hitTarget()
+
         # If movement vector does not exist, hitbox is at target
         # Call self.hitTarget(), which can be implemented by classes extenging hitbox
         else:

@@ -2,7 +2,7 @@
 # It is (will be) used by our weapon class to keep track of individual hitboxes of a weapon
 class WeaponHitBoxFrame():
     # initialize
-    def __init__(self, x, y, width, height, startTick, duration, isProjectile, target, speed):
+    def __init__(self, x, y, width, height, startTick, duration, isProjectile, targetKey, speed):
         self.x = x
         self.y = y
         self.width = width
@@ -13,8 +13,8 @@ class WeaponHitBoxFrame():
         self.duration = duration
         # Set up isProjectile
         self.isProjectile = isProjectile
-        # The target of the projectile, a vector
-        self.target = target
+        # The key for what the target of the projectile should be set to
+        self.targetKey = targetKey
         # The speed of the projectile
         self.speed = speed
         # Set up bool to track if a projectile has hit its target (and should be removed)
