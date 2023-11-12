@@ -19,7 +19,6 @@ from setupVars import BIGFONT, WIDTH, HEIGHT, WIN
 # Give the window a name 
 pygame.display.set_caption("Shooty McShootface")
 
-
 # Import the tiling of the background
 BGTILE = pygame.transform.scale(pygame.image.load("./imgs/backgroundTile.png"), (100,100))
 # Import the skull for the kill tracker
@@ -123,6 +122,18 @@ def main():
             # Set the maximum number of times the while loop runs (Frames per second)
             clock.tick(60)
 
+            #set display image for the main menu
+            WIN.fill((255,0,0))
+            title_text = BIGFONT.render(f"Shooty McShootface", 1, "white")
+            WIN.blit(title_text, ((WIDTH - title_text.get_width()) / 2, 10))
+            start_text = BIGFONT.render(f"Game Start", 1, "white")
+            WIN.blit(start_text, ((WIDTH - start_text.get_width()) / 2, (HEIGHT - start_text.get_height())/2))
+            #set-up to draw the rectangle
+            input_rect = pygame.Rect(((WIDTH - start_text.get_width()) / 2 , (HEIGHT - start_text.get_height()) / 2, start_text.get_width(), start_text.get_height()))
+            color = pygame.Color(0,0,0)
+            pygame.draw.rect(WIN, color, input_rect,3)
+
+            pygame.display.update()
             # Check all events that have happened since the last check
             for event in pygame.event.get():
                 # User closed window with x
@@ -131,6 +142,12 @@ def main():
                     mainMenu = False
                     run = False
                     break
+                #check for mouse click events
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    #Check if the mouse click is inside the rectangle
+                    pos = pygame.mouse.get_pos()
+                    if input_rect.collidepoint(pos):
+                        mainMenu = False
             
             # Check the keys pressed
             keys = pygame.key.get_pressed()
