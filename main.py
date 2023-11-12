@@ -125,13 +125,17 @@ def main():
             #set display image for the main menu
             WIN.fill((255,0,0))
             title_text = BIGFONT.render(f"Shooty McShootface", 1, "white")
-            WIN.blit(title_text, ((WIDTH - title_text.get_width()) / 2, 10))
-            start_text = BIGFONT.render(f"Game Start", 1, "white")
-            WIN.blit(start_text, ((WIDTH - start_text.get_width()) / 2, (HEIGHT - start_text.get_height())/2))
+            WIN.blit(title_text, ((WIDTH - title_text.get_width()) / 2, 40))
+            start_text = BIGFONT.render(f"Click to Start!", 1, "black")
+            
             #set-up to draw the rectangle
-            input_rect = pygame.Rect(((WIDTH - start_text.get_width()) / 2 , (HEIGHT - start_text.get_height()) / 2, start_text.get_width(), start_text.get_height()))
+            input_rect = pygame.Rect(((WIDTH - start_text.get_width()) / 2 -20, (HEIGHT - start_text.get_height()) / 2 -20, start_text.get_width() + 40, start_text.get_height() + 30))
             color = pygame.Color(0,0,0)
-            pygame.draw.rect(WIN, color, input_rect,3)
+            pygame.draw.rect(WIN, color, input_rect)
+            inner_rect = pygame.Rect(((WIDTH - start_text.get_width()) / 2 -10, (HEIGHT - start_text.get_height()) / 2 -10, start_text.get_width() + 20, start_text.get_height() + 10))
+            pygame.draw.rect(WIN, 'white', inner_rect)
+
+            WIN.blit(start_text, ((WIDTH - start_text.get_width()) / 2, (HEIGHT - start_text.get_height())/2))
 
             pygame.display.update()
             # Check all events that have happened since the last check
@@ -149,17 +153,17 @@ def main():
                     if input_rect.collidepoint(pos):
                         mainMenu = False
             
-            # Check the keys pressed
-            keys = pygame.key.get_pressed()
-            # If the key is space, close the main menu - this is temporary behavior
-            if keys[pygame.K_SPACE]:
-                mainMenu = False
-                keys = []
+            # # Check the keys pressed
+            # keys = pygame.key.get_pressed()
+            # # If the key is space, close the main menu - this is temporary behavior
+            # if keys[pygame.K_SPACE]:
+            #     mainMenu = False
+            #     keys = []
             
-            # Tell the user to hit space
-            hit_space = BIGFONT.render("Hit Space", 1, "white")
-            WIN.blit(hit_space, ((WIDTH - hit_space.get_width())/2, (HEIGHT - hit_space.get_height())/2 + hit_space.get_height()))
-            pygame.display.update()
+            # # Tell the user to hit space
+            # hit_space = BIGFONT.render("Hit Space", 1, "white")
+            # WIN.blit(hit_space, ((WIDTH - hit_space.get_width())/2, (HEIGHT - hit_space.get_height())/2 + hit_space.get_height()))
+            # pygame.display.update()
 
         # End main menu
 
