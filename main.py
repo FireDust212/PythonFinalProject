@@ -17,7 +17,7 @@ from weapons import WEAPONSETUP
 from setupVars import BIGFONT, WIDTH, HEIGHT, WIN
 
 # Give the window a name 
-pygame.display.set_caption("Shooty McShootface")
+pygame.display.set_caption("Square Survivor")
 
 # Import the tiling of the background
 BGTILE = pygame.transform.scale(pygame.image.load("./imgs/backgroundTile.png"), (100,100))
@@ -124,7 +124,9 @@ def main():
 
             #set display image for the main menu
             WIN.fill((255,0,0))
-            title_text = BIGFONT.render(f"Shooty McShootface", 1, "white")
+            title_text = BIGFONT.render(f"Square Survivor", 1, "white")
+            title_shadow = BIGFONT.render(f"Square Survivor", 1, "black")
+            WIN.blit(title_shadow, ((WIDTH - title_text.get_width()) / 2 + 2, 40 + 2))
             WIN.blit(title_text, ((WIDTH - title_text.get_width()) / 2, 40))
             start_text = BIGFONT.render(f"Click to Start!", 1, "black")
             
